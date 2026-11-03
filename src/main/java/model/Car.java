@@ -57,7 +57,6 @@ public class Car {
         if (Color.BLUE.equals(color)) return "Blue";
         if (Color.GREEN.equals(color)) return "Green";
         if (Color.YELLOW.equals(color)) return "Yellow";
-        if (Color.ORANGE.equals(color)) return "Orange";
         return "Custom";
     }
 
