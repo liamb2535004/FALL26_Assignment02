@@ -35,7 +35,7 @@ public class CarShapeNode extends Pane {
     }
     
     /**
-     * Combines all nodes for carShape
+     * Combines all nodes for carShape into a single pane
      */
     private void buildCarShapes() {
         Color bodyColor = car.getColor();
@@ -109,7 +109,7 @@ public class CarShapeNode extends Pane {
     }
 
     /**
-     * Constructs a wheel unit with outer rubber, inner rim, and spokes.
+     * Constructs a wheel unit with outer rubber, inner rim, and spokes, combining nodes into a single pane
      *
      * @param wheelPane Pane container for wheel elements.
      * @param centerX   X position on the car body.
@@ -140,5 +140,23 @@ public class CarShapeNode extends Pane {
         spokeV.setStrokeWidth(1.2);
 
         wheelPane.getChildren().addAll(tire, rim, spokeH, spokeV, centerCap);
+    }
+    
+    public void reset() {
+    setTranslateX(0.0);
+    frontWheelPane.setRotate(0.0);
+    rearWheelPane.setRotate(0.0);
+    }
+    
+    public Pane getFrontWheelPane() {
+    return frontWheelPane;
+    }
+
+    public Pane getRearWheelPane() {
+    return rearWheelPane;
+    }
+
+    public Car getCar() {
+        return car;
     }
 }
