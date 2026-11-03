@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javafx.scene.paint.Color;
 
@@ -107,5 +108,48 @@ public class CarRaceModel {
         if (state == RaceState.RUNNING) {
             this.state = RaceState.PAUSED;
         }
+    }
+    
+    public Car getWinner() {
+        if (!finishedCars.isEmpty()) {
+            return finishedCars.get(0);
+        }
+        return null;
+    }
+
+    public List<Car> getFinalResults() {
+        return Collections.unmodifiableList(finishedCars);
+    }
+
+    public List<Car> getCars() {
+        return Collections.unmodifiableList(cars);
+    }
+
+    public RaceState getState() {
+        return state;
+    }
+
+    public void setState(RaceState state) {
+        this.state = state;
+    }
+
+    public double getTrackLength() {
+        return trackLength;
+    }
+
+    public void setTrackLength(double trackLength) {
+        this.trackLength = trackLength;
+    }
+
+    public double getStartX() {
+        return startX;
+    }
+
+    public void setStartX(double startX) {
+        this.startX = startX;
+    }
+
+    public boolean isFinished() {
+        return state == RaceState.FINISHED;
     }
 }
