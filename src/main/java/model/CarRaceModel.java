@@ -79,4 +79,33 @@ public class CarRaceModel {
             this.state = RaceState.FINISHED;
         }
     }
+    
+    /**
+     * Resets the entire race simulation.
+     */
+    public void resetRace() {
+        finishedCars.clear();
+        for (Car car : cars) {
+            car.setX(startX);
+        }
+        this.state = RaceState.READY;
+    }
+
+    /**
+     * Sets the state to RUNNING if currently READY or PAUSED.
+     */
+    public void start() {
+        if (state == RaceState.READY || state == RaceState.PAUSED) {
+            this.state = RaceState.RUNNING;
+        }
+    }
+
+    /**
+     * Pauses the simulation if running.
+     */
+    public void pause() {
+        if (state == RaceState.RUNNING) {
+            this.state = RaceState.PAUSED;
+        }
+    }
 }
