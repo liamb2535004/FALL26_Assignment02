@@ -28,7 +28,7 @@ public class CarRaceModel {
         this.state = RaceState.READY;
         this.startX = 50.0;
         this.trackLength = 700.0;
-        initializeDefaultCars();
+        initializeCars();
     }
     
     /**
@@ -44,5 +44,39 @@ public class CarRaceModel {
         cars.add(new Car("Sports", 88, Color.YELLOW, 3.8, startX, 220.0));
 
         this.state = RaceState.READY;
+    }
+    
+    /**
+     * Advances the positions of all racing cars during a simulation step.
+     * Checks if cars have crossed the finish line and tracks their arrival order.
+     *
+     * @param speedMultiplier Global multiplier from the speed slider[cite: 3].
+     * @param randomVariation A randomized factor causing each car to have different speeds
+     */
+    public void updateRaceStep(double speedMultiplier, double[] randomVariation) {
+        if (state != RaceState.RUNNING) {
+            return;
+        }
+
+        for (int i = 0; i < cars.size(); i++) {
+            Car car = cars.get(i);
+
+            if (finishedCars.contains(car)) {
+                continue;
+            }
+
+            double variation = (randomVariation != null && i < randomVariation.length) ? randomVariation[i] : 1.0;
+            double step = car.getSpeed() * speedMultiplier * variation;
+            car.move(step);
+
+            if (car.getX() >= trackLength) {
+                car.setX(trackLength);
+                finishedCars.add(car);
+            }
+        }
+
+        if (finishedCars.size() == cars.size()) {
+            this.state = RaceState.FINISHED;
+        }
     }
 }
