@@ -39,45 +39,25 @@ public class CarRaceModel {
         cars.clear();
         finishedCars.clear();
 
-        cars.add(new Car("Sedan", 23, Color.RED, 3.2, startX, 40.0));
-        cars.add(new Car("Coupe", 45, Color.BLUE, 3.6, startX, 100.0));
-        cars.add(new Car("Hatchback", 78, Color.GREEN, 3.4, startX, 160.0));
-        cars.add(new Car("Sports", 88, Color.YELLOW, 3.8, startX, 220.0));
+        cars.add(new Car("red car", 23, Color.RED, 3.2, startX, 40.0));
+        cars.add(new Car("blue car", 45, Color.BLUE, 3.6, startX, 100.0));
+        cars.add(new Car("green car", 78, Color.GREEN, 3.4, startX, 160.0));
+        cars.add(new Car("yellow car", 88, Color.YELLOW, 3.8, startX, 220.0));
 
         this.state = RaceState.READY;
     }
     
     /**
-     * Advances the positions of all racing cars during a simulation step.
-     * Checks if cars have crossed the finish line and tracks their arrival order.
+     * Registers a car as having crossed the finish line in arrival order.
      *
-     * @param speedMultiplier Global multiplier from the speed slider[cite: 3].
-     * @param randomVariation A randomized factor causing each car to have different speeds
+     * @param car The car that reached the finish line
      */
-    public void updateRaceStep(double speedMultiplier, double[] randomVariation) {
-        if (state != RaceState.RUNNING) {
-            return;
-        }
-
-        for (int i = 0; i < cars.size(); i++) {
-            Car car = cars.get(i);
-
-            if (finishedCars.contains(car)) {
-                continue;
+    public void registerFinishedCar(Car car) {
+        if (!finishedCars.contains(car)) {
+            finishedCars.add(car);
+            if (finishedCars.size() == cars.size()) {
+                this.state = RaceState.FINISHED;
             }
-
-            double variation = (randomVariation != null && i < randomVariation.length) ? randomVariation[i] : 1.0;
-            double step = car.getSpeed() * speedMultiplier * variation;
-            car.move(step);
-
-            if (car.getX() >= trackLength) {
-                car.setX(trackLength);
-                finishedCars.add(car);
-            }
-        }
-
-        if (finishedCars.size() == cars.size()) {
-            this.state = RaceState.FINISHED;
         }
     }
     
