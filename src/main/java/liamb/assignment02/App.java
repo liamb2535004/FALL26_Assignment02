@@ -1,28 +1,32 @@
 package liamb.assignment02;
 
+import controller.CarRaceController;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import model.CarRaceModel;
+import view.CarRaceView;
 
 /**
- * JavaFX App
+ *
+ * @author Liam Bohdjalian
  */
 public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox root = new VBox();
-        var scene = new Scene(root, 640, 480);
+        CarRaceModel model = new CarRaceModel();
+        CarRaceView view = new CarRaceView(model.getCars());
+        CarRaceController controller = new CarRaceController(model, view);
+
+        Scene scene = new Scene(view, 900, 540);
+        stage.setTitle("Car Race Simulation");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
-
 }
