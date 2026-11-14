@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
  *
  * @author Liam Bohdjalian
  */
-public class Car {
+public class Car {             
     private String type;
     private int number;
     private Color color;
