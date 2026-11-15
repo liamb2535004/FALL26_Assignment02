@@ -39,7 +39,8 @@ public class CarRaceController {
         this.random = new Random();
         this.currentSlideIndex = 0;
     }
-     
+    
+    
     /**
      * Initializes the background audio player from the resource file.
      */
@@ -53,6 +54,62 @@ public class CarRaceController {
             }
         } catch (Exception e) {
             System.err.println("Audio file could not be loaded: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Builds TranslateTransition and RotateTransition animations for every car
+     * and plays them simultaneously.
+     */
+    private void playRaceAnimations() {
+        raceAnimations.clear();
+        double currentRate = view.getSpeedSlider().getValue();
+        double finishDistance = CarRaceView.TRACK_WIDTH - 135.0;
+
+        double avgSpeed = model.getCars().stream()
+                .mapToDouble(Car::getSpeed)
+                .average()
+                .orElse(100.0);
+
+        double targetBaseSeconds = 10.0;
+
+        for (CarShapeNode carNode : view.getCarNodes()) {
+            Car car = carNode.getCar();
+
+            double speedRatio = avgSpeed / Math.max(car.getSpeed(), 1.0);
+            double randomFactor = 0.80 + (0.30 * random.nextDouble());
+            double durationSeconds = targetBaseSeconds * speedRatio * randomFactor;
+
+            TranslateTransition moveTransition = new TranslateTransition(Duration.seconds(durationSeconds), carNode);
+            moveTransition.setFromX(0.0);
+            moveTransition.setToX(finishDistance);
+            moveTransition.setInterpolator(Interpolator.LINEAR);
+
+            carNode.translateXProperty().addListener((obs, oldVal, newVal) -> {
+                car.setX(model.getStartX() + newVal.doubleValue());
+            });
+
+            RotateTransition frontWheelSpin = new RotateTransition(Duration.seconds(0.18), carNode.getFrontWheelPane());
+            frontWheelSpin.setByAngle(360.0);
+            frontWheelSpin.setCycleCount(Animation.INDEFINITE);
+            frontWheelSpin.setInterpolator(Interpolator.LINEAR);
+
+            RotateTransition rearWheelSpin = new RotateTransition(Duration.seconds(0.18), carNode.getRearWheelPane());
+            rearWheelSpin.setByAngle(360.0);
+            rearWheelSpin.setCycleCount(Animation.INDEFINITE);
+            rearWheelSpin.setInterpolator(Interpolator.LINEAR);
+
+            ParallelTransition carAnimation = new ParallelTransition(moveTransition, frontWheelSpin, rearWheelSpin);
+            carAnimation.setRate(currentRate);
+
+            moveTransition.setOnFinished(event -> {
+                carAnimation.stop();
+                carNode.setTranslateX(finishDistance);
+                handleCarFinished(car);
+            });
+
+            raceAnimations.add(carAnimation);
+            carAnimation.play();
         }
     }
 
