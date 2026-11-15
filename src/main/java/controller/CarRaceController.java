@@ -38,6 +38,10 @@ public class CarRaceController {
         this.raceAnimations = new ArrayList<>();
         this.random = new Random();
         this.currentSlideIndex = 0;
+        
+        initializeAudio();
+        bindControlEvents();
+        startSlideshow();
     }
     
     
