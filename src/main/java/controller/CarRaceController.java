@@ -58,6 +58,23 @@ public class CarRaceController {
     }
 
     /**
+     * Attaches event handlers to Start, Pause, Reset buttons, and the speed slider.
+     */
+    private void bindControlEvents() {
+        view.getStartButton().setOnAction(e -> startRace());
+        view.getPauseButton().setOnAction(e -> pauseRace());
+        view.getResetButton().setOnAction(e -> resetRace());
+
+        view.getSpeedSlider().valueProperty().addListener((obs, oldVal, newVal) -> {
+            double rate = newVal.doubleValue();
+            view.getSpeedValueLabel().setText(String.format("%.1fx", rate));
+            for (ParallelTransition anim : raceAnimations) {
+                anim.setRate(rate);
+            }
+        });
+    }
+
+    /**
      * Plays the intro slideshow before automatically starting the race.
      */
     public void startSlideshow() {
