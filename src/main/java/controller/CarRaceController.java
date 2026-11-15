@@ -58,6 +58,81 @@ public class CarRaceController {
     }
 
     /**
+     * Plays the intro slideshow before automatically starting the race.
+     */
+    public void startSlideshow() {
+        List<Car> cars = model.getCars();
+        if (cars.isEmpty()) {
+            return;
+        }
+
+        view.getStartButton().setDisable(true);
+        view.getPauseButton().setDisable(true);
+        view.getResetButton().setDisable(true);
+
+        if (mediaPlayer != null) {
+            mediaPlayer.seek(Duration.ZERO);
+            mediaPlayer.play();
+        }
+
+        currentSlideIndex = 0;
+        view.showSlideCar(cars.get(currentSlideIndex), 1, cars.size());
+
+        slideshowTimeline = new Timeline(new KeyFrame(Duration.seconds(2.0), e -> {
+            currentSlideIndex++;
+            if (currentSlideIndex < cars.size()) {
+                view.showSlideCar(cars.get(currentSlideIndex), currentSlideIndex + 1, cars.size());
+            } else {
+                slideshowTimeline.stop();
+                finishSlideshowAndBeginRace();
+            }
+        }));
+        slideshowTimeline.setCycleCount(cars.size());
+        slideshowTimeline.play();
+    }
+
+    /**
+     * Hides the slideshow overlay, enables race controls, and launches the race.
+     */
+    private void finishSlideshowAndBeginRace() {
+        view.hideSlideshow();
+        view.getStartButton().setDisable(false);
+        view.getPauseButton().setDisable(false);
+        view.getResetButton().setDisable(false);
+        startRace();
+    }
+
+    /**
+     * Starts or resumes the race animations and background audio.
+     */
+    public void startRace() {
+        if (model.getState() == CarRaceModel.RaceState.FINISHED) {
+            return;
+        }
+
+        if (mediaPlayer != null && mediaPlayer.getStatus() != MediaPlayer.Status.PLAYING) {
+            mediaPlayer.play();
+        }
+
+        if (model.getState() == CarRaceModel.RaceState.PAUSED) {
+            model.start();
+            view.updateRaceStatus("Race in Progress!", "Cars are racing toward the arrival line.");
+            for (ParallelTransition anim : raceAnimations) {
+                if (anim.getStatus() == Animation.Status.PAUSED) {
+                    anim.play();
+                }
+            }
+            return;
+        }
+
+        if (model.getState() == CarRaceModel.RaceState.READY) {
+            model.start();
+            view.updateRaceStatus("Race in Progress!", "Cars are racing toward the arrival line.");
+            playRaceAnimations();
+        }
+    }
+
+    /**
      * Builds TranslateTransition and RotateTransition animations for every car
      * and plays them simultaneously.
      */
