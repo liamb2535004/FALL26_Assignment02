@@ -1,0 +1,43 @@
+.racetrack {
+    -fx-background-color: #464c52;
+}
+
+.lane-divider {
+    -fx-stroke: #cbd5e1;
+    -fx-stroke-width: 2.0;
+}
+
+.vertical-banner {
+    -fx-background-color: #2d6a2e;
+}
+
+.card-panel {
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1px;
+}
+
+.banner-letter {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.control-btn,
+.speed-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.status-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.status-submessage,
+.results-title,
+.result-place,
+.result-car-name,
+.result-car-color {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
