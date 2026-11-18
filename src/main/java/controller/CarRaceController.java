@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Random;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
-import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -28,23 +26,19 @@ public class CarRaceController {
     private final CarRaceView view;
     private final List<ParallelTransition> raceAnimations;
     private final Random random;
-    private Timeline slideshowTimeline;
+
     private MediaPlayer mediaPlayer;
-    private int currentSlideIndex;
 
     public CarRaceController(CarRaceModel model, CarRaceView view) {
         this.model = model;
         this.view = view;
         this.raceAnimations = new ArrayList<>();
         this.random = new Random();
-        this.currentSlideIndex = 0;
-        
+
         initializeAudio();
         bindControlEvents();
-        startSlideshow();
     }
-    
-    
+
     /**
      * Initializes the background audio player from the resource file.
      */
@@ -79,51 +73,6 @@ public class CarRaceController {
     }
 
     /**
-     * Plays the intro slideshow before automatically starting the race.
-     */
-    public void startSlideshow() {
-        List<Car> cars = model.getCars();
-        if (cars.isEmpty()) {
-            return;
-        }
-
-        view.getStartButton().setDisable(true);
-        view.getPauseButton().setDisable(true);
-        view.getResetButton().setDisable(true);
-
-        if (mediaPlayer != null) {
-            mediaPlayer.seek(Duration.ZERO);
-            mediaPlayer.play();
-        }
-
-        currentSlideIndex = 0;
-        view.showSlideCar(cars.get(currentSlideIndex), 1, cars.size());
-
-        slideshowTimeline = new Timeline(new KeyFrame(Duration.seconds(2.0), e -> {
-            currentSlideIndex++;
-            if (currentSlideIndex < cars.size()) {
-                view.showSlideCar(cars.get(currentSlideIndex), currentSlideIndex + 1, cars.size());
-            } else {
-                slideshowTimeline.stop();
-                finishSlideshowAndBeginRace();
-            }
-        }));
-        slideshowTimeline.setCycleCount(cars.size());
-        slideshowTimeline.play();
-    }
-
-    /**
-     * Hides the slideshow overlay, enables race controls, and launches the race.
-     */
-    private void finishSlideshowAndBeginRace() {
-        view.hideSlideshow();
-        view.getStartButton().setDisable(false);
-        view.getPauseButton().setDisable(false);
-        view.getResetButton().setDisable(false);
-        startRace();
-    }
-
-    /**
      * Starts or resumes the race animations and background audio.
      */
     public void startRace() {
@@ -149,7 +98,7 @@ public class CarRaceController {
         if (model.getState() == CarRaceModel.RaceState.READY) {
             model.start();
             view.updateRaceStatus("Race in Progress!", "Cars are racing toward the arrival line.");
-            playRaceAnimations();
+            buildAndPlayRaceAnimations();
         }
     }
 
@@ -157,7 +106,7 @@ public class CarRaceController {
      * Builds TranslateTransition and RotateTransition animations for every car
      * and plays them simultaneously.
      */
-    private void playRaceAnimations() {
+    private void buildAndPlayRaceAnimations() {
         raceAnimations.clear();
         double currentRate = view.getSpeedSlider().getValue();
         double finishDistance = CarRaceView.TRACK_WIDTH - 135.0;
@@ -173,7 +122,7 @@ public class CarRaceController {
             Car car = carNode.getCar();
 
             double speedRatio = avgSpeed / Math.max(car.getSpeed(), 1.0);
-            double randomFactor = 0.80 + (0.30 * random.nextDouble());
+            double randomFactor = 0.88 + (0.24 * random.nextDouble());
             double durationSeconds = targetBaseSeconds * speedRatio * randomFactor;
 
             TranslateTransition moveTransition = new TranslateTransition(Duration.seconds(durationSeconds), carNode);
@@ -231,7 +180,7 @@ public class CarRaceController {
     public void pauseRace() {
         if (model.getState() == CarRaceModel.RaceState.RUNNING) {
             model.pause();
-            view.updateRaceStatus("⏸️ Race Paused", "Press Start to resume the race.");
+            view.updateRaceStatus("Race Paused", "Press Start to resume the race.");
             for (ParallelTransition anim : raceAnimations) {
                 if (anim.getStatus() == Animation.Status.RUNNING) {
                     anim.pause();
