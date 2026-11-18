@@ -22,7 +22,6 @@ public class CarShapeNode extends Pane {
     private final Car car;
     private final Pane frontWheelPane;
     private final Pane rearWheelPane;
-    private double wheelRotationAngle = 0.0;
 
     public CarShapeNode(Car car) {
         this.car = car;
@@ -91,8 +90,8 @@ public class CarShapeNode extends Pane {
         numberText.setX(42.0 + (28.0 - numberText.getLayoutBounds().getWidth()) / 2.0);
         numberText.setY(22.0);
 
-        BuildWheelShapes(rearWheelPane, 26.0, 32.0, 10.0);
-        BuildWheelShapes(frontWheelPane, 84.0, 32.0, 10.0);
+        buildWheelShapes(rearWheelPane, 26.0, 32.0, 10.0);
+        buildWheelShapes(frontWheelPane, 84.0, 32.0, 10.0);
 
         getChildren().addAll(
             lowerBody,
@@ -116,26 +115,31 @@ public class CarShapeNode extends Pane {
      * @param centerY   Y position on the car body.
      * @param radius    Tire radius.
      */
-    private void BuildWheelShapes(Pane wheelPane, double centerX, double centerY, double radius) {
-        wheelPane.setLayoutX(centerX);
-        wheelPane.setLayoutY(centerY);
+    private void buildWheelShapes(Pane wheelPane, double centerX, double centerY, double radius) {
+        double diameter = radius * 2.0;
 
-        Circle tire = new Circle(0, 0, radius);
+        wheelPane.setPrefSize(diameter, diameter);
+        wheelPane.setMinSize(diameter, diameter);
+        wheelPane.setMaxSize(diameter, diameter);
+        wheelPane.setLayoutX(centerX - radius);
+        wheelPane.setLayoutY(centerY - radius);
+
+        Circle tire = new Circle(radius, radius, radius);
         tire.setFill(Color.rgb(35, 35, 35));
         tire.setStroke(Color.BLACK);
         tire.setStrokeWidth(1.2);
 
-        Circle rim = new Circle(0, 0, radius * 0.62);
+        Circle rim = new Circle(radius, radius, radius * 0.62);
         rim.setFill(Color.LIGHTGRAY);
 
-        Circle centerCap = new Circle(0, 0, 2.0);
+        Circle centerCap = new Circle(radius, radius, 2.0);
         centerCap.setFill(Color.DARKGRAY);
 
-        Line spokeH = new Line(-radius * 0.58, 0, radius * 0.58, 0);
+        Line spokeH = new Line(radius - radius * 0.58, radius, radius + radius * 0.58, radius);
         spokeH.setStroke(Color.BLACK);
         spokeH.setStrokeWidth(1.2);
 
-        Line spokeV = new Line(0, -radius * 0.58, 0, radius * 0.58);
+        Line spokeV = new Line(radius, radius - radius * 0.58, radius, radius + radius * 0.58);
         spokeV.setStroke(Color.BLACK);
         spokeV.setStrokeWidth(1.2);
 
