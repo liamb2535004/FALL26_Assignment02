@@ -42,6 +42,9 @@ public class CarRaceView extends BorderPane {
             getStylesheets().add(cssUrl.toExternalForm());
         }
         setPadding(new Insets(14));
+
+        setTop(createTopSection(cars));
+        setCenter(createBottomSection());
     }
 
     /**
@@ -66,6 +69,36 @@ public class CarRaceView extends BorderPane {
         trackSection.setAlignment(Pos.CENTER);
         trackSection.setPadding(new Insets(6, 0, 14, 0));
         return trackSection;
+    }
+
+    /**
+     * Builds the bottom control panel and race results panel.
+     */
+    private HBox createBottomSection() {
+        HBox buttonRow = new HBox(12, startButton, pauseButton, resetButton);
+        buttonRow.setAlignment(Pos.CENTER_LEFT);
+
+        speedSlider.setPrefWidth(210);
+        speedSlider.setBlockIncrement(0.25);
+
+        HBox sliderRow = new HBox(12, createLabel("Simulation Speed:", "speed-label"), speedSlider, speedValueLabel);
+        sliderRow.setAlignment(Pos.CENTER_LEFT);
+
+        VBox controlsCard = new VBox(22, buttonRow, sliderRow);
+        controlsCard.setPrefSize(420, 225);
+        controlsCard.setPadding(new Insets(18));
+        controlsCard.getStyleClass().add("card-panel");
+
+        statusSubMessageLabel.setWrapText(true);
+
+        VBox resultsCard = new VBox(6, statusHeaderLabel, statusSubMessageLabel, leaderboardBox);
+        resultsCard.setPrefSize(445, 225);
+        resultsCard.setPadding(new Insets(14, 18, 14, 18));
+        resultsCard.getStyleClass().add("card-panel");
+
+        HBox bottomSection = new HBox(14, controlsCard, resultsCard);
+        bottomSection.setAlignment(Pos.CENTER);
+        return bottomSection;
     }
 
     private VBox createVerticalBanner(String word) {
@@ -125,6 +158,33 @@ public class CarRaceView extends BorderPane {
     public void updateRaceStatus(String header, String subMessage) {
         statusHeaderLabel.setText(header);
         statusSubMessageLabel.setText(subMessage);
+    }
+
+    public void displayFinalResults(Car winner, List<Car> rankedCars) {
+        updateRaceStatus("Race Finished!", String.format("Congratulations! Car #%d (%s) is the winner!", winner.getNumber(), winner.getColorName()));
+
+        leaderboardBox.getChildren().clear();
+        leaderboardBox.getChildren().add(createLabel("Final Results:", "results-title"));
+
+        String[] order = {"1st", "2nd", "3rd", "4th", "5th"};
+
+        for (int i = 0; i < rankedCars.size(); i++) {
+            Car car = rankedCars.get(i);
+            String place = order[Math.min(i, order.length - 1)];
+
+            Label placeLabel = createLabel(place, "result-place");
+            placeLabel.setPrefWidth(40);
+
+            Label carName = createLabel("Car #" + car.getNumber(), "result-car-name");
+            carName.setPrefWidth(70);
+
+            Label carColorLabel = createLabel(car.getColorName(), "result-car-color");
+            carColorLabel.setTextFill(car.getColor());
+
+            HBox row = new HBox(10, placeLabel, carName, carColorLabel);
+            row.setAlignment(Pos.CENTER_LEFT);
+            leaderboardBox.getChildren().add(row);
+        }
     }
 
     public void resetResultsPanel() {
