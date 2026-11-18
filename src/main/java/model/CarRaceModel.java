@@ -42,7 +42,7 @@ public class CarRaceModel {
         cars.add(new Car("honda", 23, Color.RED, 3.2, startX, 40.0));
         cars.add(new Car("mazda", 45, Color.BLUE, 3.6, startX, 100.0));
         cars.add(new Car("ford", 78, Color.GREEN, 3.4, startX, 160.0));
-        cars.add(new Car("porshe", 88, Color.YELLOW, 3.8, startX, 220.0));
+        cars.add(new Car("porsche", 88, Color.YELLOW, 3.8, startX, 220.0));
 
         this.state = RaceState.READY;
     }
